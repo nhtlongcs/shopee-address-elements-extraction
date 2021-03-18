@@ -351,8 +351,8 @@ def main():
 
             # One example can give several spans, this is the index of the example containing this span of text.
             sample_index = sample_mapping[i]
-            examples[answer_column_name][sample_index] = ast.literal_eval(examples[answer_column_name][sample_index])
             answers = examples[answer_column_name][sample_index]
+            answers = ast.literal_eval(answers)
             # If no answers are given, set the cls_index as answer.
             if len(answers["answer_start"]) == 0:
                 tokenized_examples["start_positions"].append(cls_index)
