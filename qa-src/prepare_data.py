@@ -55,6 +55,8 @@ def read_data(path, negative=True):
     
     result = shuffle(result)
     result["id"] = result.index + 1
+    result['id'] = result.apply(lambda row: 'a' + str(row.id)  , axis=1)
+
     return result
 
 

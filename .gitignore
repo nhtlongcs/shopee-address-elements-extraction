@@ -130,3 +130,7 @@ dmypy.json
 
 *.zip
 *.csv
+!qa-src/*.csv
+!qa-src/runs
+qa-src/tmp/
+*.lock

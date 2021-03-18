@@ -1,0 +1,4 @@
+answers,question,context,id
+"{'text': ['tawi kar pand'], 'answer_start': [12]}",jalan?,"karang jati tawi kar pand, no 53",a1
+"{'text': ['jl. lamongrejo'], 'answer_start': [0]}",jalan?,jl. lamongrejo no 42 lamongan ( utara alun-alun lamongan ),a2
+"{'text': ['indomaret'], 'answer_start': [0]}",minat?,"indomaret ir. h. jua,",a3

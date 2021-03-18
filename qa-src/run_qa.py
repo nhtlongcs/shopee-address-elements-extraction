@@ -21,6 +21,7 @@ import ast
 import logging
 import os
 import sys
+import json
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -350,8 +351,8 @@ def main():
 
             # One example can give several spans, this is the index of the example containing this span of text.
             sample_index = sample_mapping[i]
+            examples[answer_column_name][sample_index] = ast.literal_eval(examples[answer_column_name][sample_index])
             answers = examples[answer_column_name][sample_index]
-            answers = ast.literal_eval(answers)
             # If no answers are given, set the cls_index as answer.
             if len(answers["answer_start"]) == 0:
                 tokenized_examples["start_positions"].append(cls_index)
@@ -500,10 +501,14 @@ def main():
         references = [{"id": ex["id"], "answers": ex[answer_column_name]} for ex in datasets["validation"]]
         return EvalPrediction(predictions=formatted_predictions, label_ids=references)
 
+    # metric = load_metric("squad_v2" if data_args.version_2_with_negative else "squad")
     metric = load_metric("squad_v2" if data_args.version_2_with_negative else "squad")
 
-    def compute_metrics(p: EvalPrediction):
-        return metric.compute(predictions=p.predictions, references=p.label_ids)
+    def compute_metrics(pred: EvalPrediction):
+
+        for idx, v in enumerate(pred.label_ids):
+            pred.label_ids[idx]['answers'] = (ast.literal_eval(v['answers']))
+        return metric.compute(predictions=pred.predictions, references=pred.label_ids)
 
     # Initialize our Trainer
     trainer = QuestionAnsweringTrainer(

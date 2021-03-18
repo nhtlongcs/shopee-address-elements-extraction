@@ -4,9 +4,15 @@ python run_qa.py \
   --validation_file val_0.csv \
   --do_train \
   --do_eval \
-  --per_device_train_batch_size 12 \
-  --learning_rate 3e-5 \
-  --num_train_epochs 2 \
-  --max_seq_length 384 \
-  --doc_stride 128 \
-  --output_dir tmp/debug_squad/
+  --per_device_train_batch_size 64 \
+  --learning_rate 3e-3 \
+  --num_train_epochs 5 \
+  --max_seq_length 25 \
+  --doc_stride 16 \
+  --output_dir tmp/debug_squad/ \
+  --fp16 True \
+  --fp16_opt_level O2 \
+  --save_total_limit 3 \
+  --metric_for_best_model f1 \
+  --eval_steps 500 \
+  --save_steps 1000 \
