@@ -40,6 +40,7 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
     set_seed,
+    BertTokenizerFast,
 )
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 from transformers.utils import check_min_version
@@ -266,7 +267,8 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    tokenizer = AutoTokenizer.from_pretrained(
+    print(model_args.model_name_or_path)
+    tokenizer = BertTokenizerFast.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
         use_fast=True,

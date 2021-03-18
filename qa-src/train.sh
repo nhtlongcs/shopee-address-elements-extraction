@@ -1,5 +1,5 @@
 python run_qa.py \
-  --model_name_or_path bert-base-uncased \
+  --model_name_or_path Wikidepia\/indobert-lite-squad \
   --train_file train_0.csv \
   --validation_file val_0.csv \
   --do_train \
