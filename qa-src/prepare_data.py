@@ -8,7 +8,7 @@ tqdm.pandas()
 def clean(df):
     return df
 
-def read_data(path, negative=True):
+def read_data(path, negative=True, negative_only=True):
     csv_path = Path(path)
     df = pd.read_csv(csv_path)
     df = clean(df)
@@ -24,7 +24,10 @@ def read_data(path, negative=True):
     if not negative:
         df_poi = df_poi[df_poi.POI != ''].reset_index(drop=True)
         df_street = df_street[df_street.street != ''].reset_index(drop=True)
-
+    else:
+        if negative_only:
+            df_poi = df_poi[df_poi.POI == ''].reset_index(drop=True)
+            df_street = df_street[df_street.street == ''].reset_index(drop=True)
     df_poi['start'] = df_poi.progress_apply(lambda row: \
         row['raw_address'].find(row['POI']) , axis=1)
     df_poi = df_poi[df_poi.start != -1].reset_index(drop=True)
@@ -59,14 +62,42 @@ def read_data(path, negative=True):
 
     return result
 
+#generate positive files
 
-data = read_data('train.csv', negative=False)
-skf = StratifiedKFold(n_splits=5)
-X = data.drop('lbl', axis = 1)
-y = data.lbl
+# data = read_data('train.csv', negative=False, negative_only=False)
+# skf = StratifiedKFold(n_splits=5)
+# X = data.drop('lbl', axis = 1)
+# y = data.lbl
 
-for fold, (train_index, test_index) in enumerate(skf.split(X, y)):
-    X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-    print(len(X_train),len(X_test))
-    X_train.to_csv(f'train_{fold}.csv', index=False)
-    X_test.to_csv(f'val_{fold}.csv', index=False)
+# for fold, (train_index, test_index) in enumerate(skf.split(X, y)):
+#     X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+#     print(len(X_train),len(X_test))
+#     X_train.to_csv(f'train_{fold}.csv', index=False)
+#     X_test.to_csv(f'val_{fold}_pos.csv', index=False)
+
+#generate negative files
+
+# data = read_data('train.csv', negative=True, negative_only=True)
+# skf = StratifiedKFold(n_splits=5)
+# X = data.drop('lbl', axis = 1)
+# y = data.lbl
+
+# for fold, (train_index, test_index) in enumerate(skf.split(X, y)):
+#     _, X_test = X.iloc[train_index], X.iloc[test_index]
+#     print(len(X_test))
+#     X_test.to_csv(f'val_{fold}_neg.csv', index=False)
+
+# concat
+
+from glob import glob
+pos_csv_ls = glob('val_*_pos.csv')
+neg_csv_ls = glob('val_*_neg.csv')
+pos_csv_ls.sort()
+neg_csv_ls.sort()
+assert len(pos_csv_ls) == len(neg_csv_ls), 'not match'
+
+for idx, (fpos, fneg) in enumerate(list(zip(pos_csv_ls,neg_csv_ls))):
+    fpos = pd.read_csv(fpos)
+    fneg = pd.read_csv(fneg)
+    output = pd.concat([fpos, fneg])
+    output.to_csv(f'val_{idx}.csv',index=False)

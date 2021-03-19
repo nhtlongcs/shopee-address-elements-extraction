@@ -132,5 +132,6 @@ dmypy.json
 *.csv
 !qa-src/*.csv
 !qa-src/runs
+qa-src/bak_folds
 qa-src/tmp/
 *.lock
